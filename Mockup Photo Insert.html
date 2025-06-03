@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mockup Photo Insert</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    canvas {
+      margin-top: 20px;
+      max-width: 100%;
+      height: auto;
+      border: 2px solid #fff;
+    }
+    input[type="file"] {
+      margin: 10px 0;
+    }
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Upload Your Photo</h1>
+  <input type="file" id="photoInput" accept="image/*" capture="environment">
+  <canvas id="mockupCanvas" width="2550" height="3600"></canvas>
+  <br />
+  <button onclick="downloadImage()">Download Result</button>
+
+  <script>
+    const canvas = document.getElementById('mockupCanvas');
+    const ctx = canvas.getContext('2d');
+    const mockup = new Image();
+    mockup.src = 'SUbject0.png'; // Local image path
+
+    mockup.onload = () => {
+      ctx.drawImage(mockup, 0, 0, canvas.width, canvas.height);
+    };
+
+    document.getElementById('photoInput').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        const userImg = new Image();
+        userImg.onload = function () {
+          ctx.drawImage(mockup, 0, 0, canvas.width, canvas.height); // reset canvas
+          ctx.drawImage(userImg, 1672, 348, 625, 700); // insert user photo
+        };
+        userImg.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    function downloadImage() {
+      const link = document.createElement('a');
+      link.download = 'mockup_result.png';
+      link.href = canvas.toDataURL();
+      link.click();
+    }
+  </script>
+</body>
+</html>
